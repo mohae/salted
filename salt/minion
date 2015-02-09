@@ -21,7 +21,7 @@ master: localhost
 # Since salt uses detached ids it is possible to run multiple minions on the
 # same machine but with different ids, this can be useful for salt compute
 # clusters.
-id: dev
+id: salt-dev1
 
 # Append a domain to a hostname in the event that it does not exist.  This is
 # usefule for systems where socket.getfqdn() does not actually result in a
@@ -99,7 +99,7 @@ id: dev
 # verbose. Normaly only states that fail or states that have changes are
 # returned, but setting state_verbose to True will return all states that
 # were checked
-#state_verbose: False
+state_verbose: true
 #
 # autoload_dynamic_modules Turns on automatic loading of modules found in the
 # environments on the master. This is turned on by default, to turn of
@@ -115,8 +115,8 @@ id: dev
 # Normally the minion is not isolated to any single environment on the master
 # when running states, but the environment can be isolated on the minion side
 # by statically setting it. Remember that the recommended way to manage
-# environments is to issolate via the top file.
-environment: dev
+# environments is to isolate via the top file.
+#environment:
 #
 # If using the local file directory, then the state top file name needs to be
 # defined, by default this is top.sls.

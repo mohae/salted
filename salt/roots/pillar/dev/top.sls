@@ -1,4 +1,4 @@
 ﻿dev:
-  '*':
-    - users.groups
+  '*dev*':
     - users.users
+    - users.groups

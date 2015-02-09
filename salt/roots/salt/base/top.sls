@@ -12,7 +12,8 @@ base:
     - curl
     - date
     - git
-    - hosts
+#    - hosts
+    - iptables
     - locale
     - logrotate
     - ntp
@@ -20,5 +21,6 @@ base:
     - psmisc
     - sudo
     - timezone
-	- users
+    - tree
+    - users
     - vim
