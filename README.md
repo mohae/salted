@@ -1,9 +1,10 @@
-SeaSalt
+Salted
 =======
 
 **Do not use; under development**
+_Currently only the `base` and `dev` environments are supported. The `nginx` role is a work in progress and `iptables` rules are not being set. There are probably some other gaps._
 
-SeaSalt is a salted deployment template that supports base, dev, qa, and production environments with web and db roles.
+Salted is a salted deployment template that supports base, dev, qa, and production environments with web and db roles.
 
 The salt-master and salt-minion are configured to use the same server. This is easily modified to use separate machines for the master and minion(s) by updating the `master` and `minion` files. 
 
@@ -15,6 +16,10 @@ The pillar data contained within this repository are sample data and should not 
 Replace the keys with valid, secure keys. Once this is done, do not push the repository to any publicly available locations. Doing so will result in insecure servers and having critical information, including keys, exposed to the public.
 
 ## Environments
+The environment is selected by matching on the minion id. If the minion's fully qualified domain name does not contain its environment as part of the name, set the minion id in the `minion` file. 
+
+Each environment may build on what was already set in the base environment, e.g. the `dev` environment will add users and groups specific to that environment while the `base` environment adds users and groups that should exist in all environments.
+
 ### `base`
 The `base` environment is used for software that should be on all machines and configurations that should be consistent across machines.
 
