@@ -1,13 +1,13 @@
 #
 # pillar/users.sls
 #
-users:
+dev-users:
   devuser:
     fullname: dev user
     password: $6$M8D12WUh$5kqIW1R6SWvG9mFEWSLWhnQCR6vZWXwsisj.t6ZwInaEDKmD/j8NgG4y60EJk7HKBRPkwD3lOTSJo6dzxHaf./
     email: devuser@example.com
     shell: /bin/bash
-    home: /home/devwuser
+    home: /home/devuser
     createhome: True
     uid: 3001
     gid: 3001

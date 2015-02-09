@@ -1,6 +1,7 @@
 dev:
   '*dev*':
     - wireshark
+    - users
   'roles:*web*':
     - match: grain
     - nginx

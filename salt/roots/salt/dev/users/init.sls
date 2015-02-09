@@ -1,6 +1,6 @@
 #
-# pillar/base/users/init.sls
+# salt/init.sls
 #
-users:
+include:
   - users.groups
   - users.users
