@@ -32,8 +32,16 @@ The 'dev' environment is for development machines.
 ### `qa`
 The `qa` environment is for QA environments.  In the public repo, this is mostly a replication of the `dev` environment, with any dev specific stuff, like role and user, changed to qa.
 
+__Not Implemented__
+
 ### `prod`
 The `prod` environment is for production environmets.  In the public repo, this is mostly a replication of the `dev` environment, with any dev specific stuff, like role and user, changed to prod.
 
+__Not Implemented__
 ## Roles
 Roles are defined by grains. Currently there are two roles supported, `db`, for database servers, and `web`, for webservers. A machine may have more than one role.
+
+## Notes
+Iptable rules are currently minimal in implementation. Because of my limitations in understanding the `iptables` state and the way `iptables` rule ordering works, , roles do not open up the ports they need, e.g. the web role will not add rules to allow traffic on ports 80 and 443. The `iptables` states need to be updated to allow that.
+
+Depending on what I learn about `iptables` states, I may end up depending on a managed file for the `iptables` rules.
