@@ -227,3 +227,4 @@ pillar_roots:
 grains:
   roles:
     - web
+    - db

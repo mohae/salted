@@ -1,0 +1,2 @@
+ufw:
+  pkg.removed

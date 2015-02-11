@@ -2,11 +2,11 @@ dev:
   '*dev*':
     - wireshark
     - users
-  'roles:*web*':
+#  'roles:*web*':
+#    - match: grain
+#    - nginx
+  'roles:*db*':
     - match: grain
-    - nginx
-#  'roles:*db*:
-#    - percona
-#    - dbas
-#    - dbs
-#    - dbusers
+    - percona.percona-repo
+    - percona
+    - db

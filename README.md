@@ -1,9 +1,12 @@
 Salted
 =======
-
 **Do not use; under development**
 _Currently only the `base` and `dev` environments are supported. The `nginx` role is a work in progress and `iptables` rules are not being set. There are probably some other gaps._
 
+## Requires SaltStack 2014.7 or Greater
+Both the `iptables` and `nginx` formulas that salted uses require Salt version 2014.7 (Helium) or greater. If an older version is used, errors will occur on those states.
+
+## About
 Salted is a salted deployment template that supports base, dev, qa, and production environments with web and db roles.
 
 The salt-master and salt-minion are configured to use the same server. This is easily modified to use separate machines for the master and minion(s) by updating the `master` and `minion` files. 

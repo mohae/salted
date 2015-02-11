@@ -20,6 +20,22 @@
       {%- endif %}
 
     {%- if strict_mode %}
+      # Set the policy to deny everything unless defined          
+      enable_input_reject_policy:
+        iptables.set_policy:
+          - table: filter
+          - chain: INPUT
+          - policy: DROP
+          - require:
+            - iptables: iptables_allow_localhost
+            - iptables: iptables_allow_established
+
+      enable_forward_reject_policy:
+        iptables.set_policy:
+          - table: filter
+          - chain: FORWARD
+          - policy: DROP
+
       # If the firewall is set to strict mode, we'll need to allow some 
       # that always need access to anything
       iptables_allow_localhost:
@@ -38,17 +54,7 @@
           - jump: ACCEPT
           - match: conntrack
           - ctstate: 'RELATED,ESTABLISHED'
-          - save: True            
-
-      # Set the policy to deny everything unless defined
-      enable_reject_policy:
-        iptables.set_policy:
-          - table: filter
-          - chain: INPUT
-          - policy: DROP
-          - require:
-            - iptables: iptables_allow_localhost
-            - iptables: iptables_allow_established
+          - save: True                
     {%- endif %}
 
   # Generate ipsets for all services that we have information about
