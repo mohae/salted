@@ -5,15 +5,10 @@
 # note:  the DBO, database owner, user will have complete access to
 #        its respective database. DBAs, database administrators, have
 #        complete access to the database server and are defined elsewhere.
-{% for db, args in pillar['dev_dbs'].iteritems() %}
-{{db}}_dbo:
-  mysql_user.present:
-    - name: {{args['db_user']}}
-    - host: {{args['db_host']}}
-    - database: "{{db}}.*"
-    - password_hash: "{{args['db_pass_hash']}}"
+{% for db, args in pillar['qa_dbs'].iteritems() %}
+{{db}}_db:
+  mysql_database.present:
+    - name: {{args['db_name']}}
   require:
-    - {{db}}: present
-    - service:
-      -running: mysql
+    - service.running: mysql
 {% endfor %}

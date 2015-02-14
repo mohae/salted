@@ -1,5 +1,5 @@
-dev:
-  '*dev*':
+prod:
+  '*prod*':
     - wireshark
     - users
   'roles:db':

@@ -5,8 +5,8 @@
 # WARNING: these users will have complete access to mysql
 #          from localhost. These are used as replacement
 #          for root
-{% for dba, args in pillar['dev_dbas'].iteritems() %}
-{{dba}}_create_dba:
+{% for dba, args in pillar['qa_dbas'].iteritems() %}
+{{dba}}_dba:
   mysql_user.present:
     - name: {{dba}}
     - host: {{args['db_host']}}

@@ -90,6 +90,35 @@
 
   {%- endfor %}
 
+  # Generate ipsets for all ports that we have information about
+  {%- for port_name, port_details in firewall.get('ports', {}).items() %}  
+    {% set block_nomatch = port_details.get('block_nomatch', False) %}
+
+    # Allow rules
+    {% set port = port_details.get('port') %}
+      iptables_{{port_name}}_allow:
+        iptables.append:
+          - table: filter
+          - chain: INPUT
+          - jump: ACCEPT
+          - dport: {{ port }}
+          - proto: tcp
+          - save: True
+
+    {%- if not strict_mode and global_block_nomatch or block_nomatch %}
+      # If strict mode is disabled we may want to block anything else
+      iptables_{{port_name}}_deny_other:
+        iptables.append:
+          - position: last
+          - table: filter
+          - chain: INPUT
+          - jump: REJECT
+          - dport: {{ port }}
+          - proto: tcp
+          - save: True
+    {%- endif %}    
+  {%- endfor %}
+
   # Generate rules for NAT
   {%- for service_name, service_details in firewall.get('nat', {}).items() %}  
     {%- for ip_s, ip_d in service_details.get('rules', {}).items() %}

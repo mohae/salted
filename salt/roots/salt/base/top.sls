@@ -24,3 +24,10 @@ base:
     - tree
     - users
     - vim
+  'roles:webserver':
+    - match: grain
+    - nginx
+  'roles:db':
+    - match: grain
+    - percona.percona-repo
+    - percona

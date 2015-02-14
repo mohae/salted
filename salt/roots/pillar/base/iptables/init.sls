@@ -9,6 +9,11 @@
         - 192.168.0.0/24
         - 10.0.2.2/32
 
+  ports:
+    keyserver:
+      port: 11371
+
+
   whitelist:
     networks:
       ips_allow:

@@ -5,7 +5,7 @@
 # WARNING: these users will have complete access to mysql
 #          from localhost. These are used as replacement
 #          for root
-{% for dba, args in pillar['dev_dbas'].iteritems() %}
+{% for dba, args in pillar['prod_dbas'].iteritems() %}
 {{dba}}_dba_grants:
   mysql_grants.present:
     - grant: all privileges
