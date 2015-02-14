@@ -8,8 +8,8 @@
 #
 
 qa_db_users:
-  qaUser:
+  qaDBUser:
     db_pass_hash: "*62037296EFDBA039E7DABB7986DDA82138F27296"
-    database: qa
+    database: qaDB
     db_host: localhost
     db_grants: insert,update,select,delete

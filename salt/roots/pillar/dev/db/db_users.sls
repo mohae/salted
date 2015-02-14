@@ -8,8 +8,8 @@
 #
 
 dev_db_users:
-  testUser:
+  devDBUser:
     db_pass_hash: "*62037296EFDBA039E7DABB7986DDA82138F27296"
-    database: test
+    database: devDB
     db_host: localhost
     db_grants: insert,update,select,delete

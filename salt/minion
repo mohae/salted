@@ -157,7 +157,8 @@ file_roots:
     - /srv/salt/dev
   qa:
     - /srv/salt/qa
-    
+  prod:
+    - /srv/salt/prod
 # The hash_type is the hash to use when discovering the hash of a file in
 # the minion directory, the default is md5, but sha1, sha224, sha256, sha384
 # and sha512 are also supported.
@@ -173,6 +174,8 @@ pillar_roots:
     - /srv/pillar/dev
   qa:
     - /srv/pillar/qa
+  prod:
+    - /srv/pillar/prod
 
 ######        Security settings       #####
 ###########################################
@@ -181,7 +184,6 @@ pillar_roots:
 # the situation where your keys end up in a bad state. If you run in open mode
 # you do so at your own risk!
 #open_mode: False
-
 
 ######         Thread settings        #####
 ###########################################

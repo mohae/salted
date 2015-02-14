@@ -1,12 +1,12 @@
 ﻿qa:
-  '*':
+  '*qa*':
     - users.users
     - users.groups
-  'roles:db':
-    - match: grain
+  '*qa* and G@roles:db':
+    - match: compound
     - db.dbas
     - db.dbs
     - db.db_users
-  'roles:web':
-    - match: grain
+  '*qa* and G@roles:web':
+    - match: compound
     - nginx

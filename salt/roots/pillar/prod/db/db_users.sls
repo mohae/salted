@@ -8,8 +8,8 @@
 #
 
 prod_db_users:
-  prodUser:
+  prodDBUser:
     db_pass_hash: "*62037296EFDBA039E7DABB7986DDA82138F27296"
-    database: prod
+    database: prodDB
     db_host: localhost
     db_grants: insert,update,select,delete

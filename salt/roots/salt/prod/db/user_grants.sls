@@ -3,7 +3,7 @@
 #
 # purpose: create the users and databases for apps using mysql
 {% for user, args in pillar['prod_db_users'].iteritems() %}
-{{user}}_dbuser_grants:
+{{user}}_prod_dbuser_grants:
   mysql_grants.present:
     - grant: {{args['db_grants']}}
     - database: "{{args['database']}}.*"

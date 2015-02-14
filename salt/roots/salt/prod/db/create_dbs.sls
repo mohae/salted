@@ -6,7 +6,7 @@
 #        its respective database. DBAs, database administrators, have
 #        complete access to the database server and are defined elsewhere.
 {% for db, args in pillar['prod_dbs'].iteritems() %}
-{{db}}_db:
+{{db}}_prod_db:
   mysql_database.present:
     - name: {{args['db_name']}}
   require:

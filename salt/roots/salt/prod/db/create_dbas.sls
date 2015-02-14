@@ -6,7 +6,7 @@
 #          from localhost. These are used as replacement
 #          for root
 {% for dba, args in pillar['prod_dbas'].iteritems() %}
-{{dba}}_create_dba:
+{{dba}}_prod_create_dba:
   mysql_user.present:
     - name: {{dba}}
     - host: {{args['db_host']}}

@@ -10,9 +10,9 @@
 #
 
 qa_dbs:
-  qa:
-    db_name: qa
-    db_user: qaDBO
+  qa_db:
+    db_name: qaDB
+    db_user: qaDBDBO
     db_pass_hash: "*7281996ED068E0E4D939D27AECD9D7447C1EA3DC"
     db_host: localhost
     db_grants: all privileges

@@ -2,8 +2,8 @@
   '*prod*':
     - users.users
     - users.groups
-  'roles:db':
-    - match: grain
+  '*prod* and G@roles:db':
+    - match: compound
     - db.dbas
     - db.dbs
     - db.db_users

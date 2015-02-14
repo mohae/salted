@@ -10,9 +10,9 @@
 #
 
 dev_dbs:
-  test:
-    db_name: test
-    db_user: testDBO
+  dev_db:
+    db_name: devDB
+    db_user: devDBDBO
     db_pass_hash: "*7281996ED068E0E4D939D27AECD9D7447C1EA3DC"
     db_host: localhost
     db_grants: all privileges

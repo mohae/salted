@@ -2,8 +2,8 @@
   '*dev*':
     - users.users
     - users.groups
-  'roles:db':
-    - match: grain
+  '*dev* and G@roles:db':
+    - match: compound
     - db.dbas
     - db.dbs
     - db.db_users

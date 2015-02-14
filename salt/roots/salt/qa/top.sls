@@ -1,7 +1,7 @@
 qa:
   '*qa*':
     - users
-  'roles:db':
-    - match: grain
+  '*qa* and G@roles:db':
+    - match: compound
     - mycnf
     - db

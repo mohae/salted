@@ -6,7 +6,7 @@
 #          from localhost. These are used as replacement
 #          for root
 {% for dba, args in pillar['prod_dbas'].iteritems() %}
-{{dba}}_dba_grants:
+{{dba}}_prod_dba_grants:
   mysql_grants.present:
     - grant: all privileges
     - database: "*.*"

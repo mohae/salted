@@ -1,9 +1,8 @@
 prod:
   '*prod*':
-    - wireshark
     - users
-  'roles:db':
-    - match: grain
+  '*prod* and G@roles:db':
+    - match: compound
     - mycnf
     - db
     

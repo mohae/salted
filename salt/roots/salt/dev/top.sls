@@ -2,8 +2,8 @@ dev:
   '*dev*':
     - wireshark
     - users
-  'roles:db':
-    - match: grain
+  '*dev* and G@roles:db':
+    - match: compound
     - mycnf
     - db
     
