@@ -45,17 +45,19 @@ The `qa` environment is for QA environments.  In the public repo, this is mostly
 #### `prod`
 The `prod` environment is for production environmets.  In the public repo, this is mostly a replication of the `dev` environment, with any dev specific stuff, like role and user, changed to prod.
 
-#### Roles
+### Roles
 Roles are defined by grains. Currently there are two roles supported, `db`, for database servers, and `web`, for webservers. A machine may have more than one role.
+
+#### `db`
+PerconaDB is the database. Percona is a drop-in replacement for MySQL and the basis for MariaDB. The `my.cnf` file in this repo should be replaced with a custom `my.cnf` file whose settings have been customized to your server. A custom `my.cnf` file can be generated using [Percona's MySQL configuration wizard tool](https://tools.percona.com/wizard).
+
+#### `webserver`
+The webserver is `nginx`, which is an event driven webserver and is better suited for modern web workloads, e.g. mobile, than the threaded Apache. Apache does have an event driven version, but, sometimes, a swiss army knife is not needed. If your needs are better suited for Apache, well, I might add support for Apache too, some day.
+
+The webserver role also adds `iptables` rules for allowing incoming tcp connections on port 80 and 443.
 
 ## Notes:
 `iptables` is used for the firewall. If you are running Ubuntu, `ufw` will be purged from the system.
-
-### PerconaDB
-PerconaDB is the database. Percona is a drop-in replacement for MySQL and the basis for MariaDB. The `my.cnf` file in this repo should be replaced with a custom `my.cnf` file whose settings have been customized to your server. A custom `my.cnf` file can be generated using [Percona's MySQL configuration wizard tool](https://tools.percona.com/wizard).
-
-### Nginx
-The webserver is `nginx`, which is an event driven webserver and is better suited for modern web workloads, e.g. mobile, than the threaded Apache. Apache does have an event driven version, but, sometimes, a swiss army knife is not needed. If your needs are better suited for Apache, well, I might add support for Apache too, some day.
 
 ## Errata
 Please create an issue, or better yet, a pull request for any corrections or improvements that you make to this repo.
