@@ -12,8 +12,13 @@
   ports:
     keyserver:
       port: 11371
+      proto: 
+        - tcp
     something:
       port: 1023
+      proto:
+        - tcp
+        - udp
 
   whitelist:
     networks:

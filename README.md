@@ -34,7 +34,7 @@ The environment is selected by matching on the minion id. If the minion's fully 
 Each environment may build on what was already set in the base environment, e.g. the `dev` environment will add users and groups specific to that environment while the `base` environment adds users and groups that should exist in all environments.
 
 #### `base`
-The `base` environment is used for software that should be on all machines and configurations that should be consistent across machines.
+The `base` environment is used for software that should be on all machines and configurations that should be consistent across machines. Some of the software is installed in the base environment and updated in the other environments, e.g. `nginx` and `iptables`.
 
 #### `dev`
 The 'dev' environment is for development machines.
@@ -43,7 +43,7 @@ The 'dev' environment is for development machines.
 The `qa` environment is for QA environments.  In the public repo, this is mostly a replication of the `dev` environment, with any dev specific stuff, like role and user, changed to qa.
 
 #### `prod`
-The `prod` environment is for production environmets.  In the public repo, this is mostly a replication of the `dev` environment, with any dev specific stuff, like role and user, changed to prod.
+The `prod` environment is for production environments.  In the public repo, this is mostly a replication of the `dev` environment, with any dev specific stuff, like role and user, changed to prod.
 
 ### Roles
 Roles are defined by grains. Currently there are two roles supported, `db`, for database servers, and `web`, for webservers. A machine may have more than one role.
@@ -74,7 +74,7 @@ The webserver is `nginx`, which is an event driven webserver and is better suite
 The webserver role also adds `iptables` rules for allowing incoming tcp connections on port 80 and 443.
 
 ## Notes:
-`iptables` is used for the firewall. If you are running Ubuntu, `ufw` will be purged from the system.
+`iptables` is used for the firewall. If you are running Ubuntu, `ufw` will be purged from the system. If the server's role or environment requires additional firewall rules, the can be added. The environment specific `iptables` pillar data use compound matching to accomplish this.
 
 ## Errata
 Please create an issue, or better yet, a pull request for any corrections or improvements that you make to this repo.

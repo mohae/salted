@@ -1,4 +1,4 @@
-nginx:
+prod-nginx:
   install_from_source: True
   use_upstart: False
   use_sysvinit: True
@@ -19,7 +19,7 @@ nginx:
 # nginx.ng
 # ========
 
-nginx:
+prod-nginx-ng:
   ng:
     # These are usually set by grains in map.jinja
     lookup:

@@ -58,7 +58,7 @@
     {%- endif %}
 
   # Generate ipsets for all services that we have information about
-  {%- for service_name, service_details in firewall.get('services', {}).items() %}  
+  {%- for service_name, service_details in firewall.get('services', {}).items() %}
     {% set block_nomatch = service_details.get('block_nomatch', False) %}
 
     # Allow rules for ips/subnets
@@ -92,62 +92,22 @@
 
   # Generate ipsets for all ports that we have information about
   {%- for port_name, port_details in firewall.get('ports', {}).items() %}  
-    {% set block_nomatch = port_details.get('block_nomatch', False) %}
-
+  
     # Allow rules
-    {% set port = port_details.get('port') %}
-      iptables_{{port_name}}_allow:
+    {%- set port = port_details.get('port') %}
+    {%- for proto in port_details.get('proto', 'tcp') %}
+      iptables_{{port_name}}_allow_{{proto}}:
         iptables.append:
           - table: filter
           - chain: INPUT
           - jump: ACCEPT
           - dport: {{ port }}
-          - proto: tcp
+          - proto: {{ proto }}
           - save: True
+    {%- endfor %}
 
-    {%- if not strict_mode and global_block_nomatch or block_nomatch %}
-      # If strict mode is disabled we may want to block anything else
-      iptables_{{port_name}}_deny_other:
-        iptables.append:
-          - position: last
-          - table: filter
-          - chain: INPUT
-          - jump: REJECT
-          - dport: {{ port }}
-          - proto: tcp
-          - save: True
-    {%- endif %}    
   {%- endfor %}
 
-
-  # Generate ipsets for all ports that we have information about
-  {%- for port_name, port_details in firewall.get('env-ports', {}).items() %}  
-    {% set block_nomatch = port_details.get('block_nomatch', False) %}
-
-    # Allow rules
-    {% set port = port_details.get('port') %}
-      iptables_{{port_name}}_allow:
-        iptables.append:
-          - table: filter
-          - chain: INPUT
-          - jump: ACCEPT
-          - dport: {{ port }}
-          - proto: tcp
-          - save: True
-
-    {%- if not strict_mode and global_block_nomatch or block_nomatch %}
-      # If strict mode is disabled we may want to block anything else
-      iptables_{{port_name}}_deny_other:
-        iptables.append:
-          - position: last
-          - table: filter
-          - chain: INPUT
-          - jump: REJECT
-          - dport: {{ port }}
-          - proto: tcp
-          - save: True
-    {%- endif %}    
-  {%- endfor %}
   
   # Generate rules for NAT
   {%- for service_name, service_details in firewall.get('nat', {}).items() %}  
