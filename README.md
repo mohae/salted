@@ -1,6 +1,6 @@
 Salted
 =======
-__Requires Salt version 2014.7.1 (Helium) or Greater__
+__Requires Salt version 2014.7.1 (Helium) or Greater__  
 This repository uses some formulas that requires _salt 2014.7.0_.
 This repository uses compound matching to match environments and roles. This was not supported in _salt 2014.7.0_ but is supported in _salt 2014.7.1_.
 
