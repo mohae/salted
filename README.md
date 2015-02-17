@@ -51,6 +51,23 @@ Roles are defined by grains. Currently there are two roles supported, `db`, for 
 #### `db`
 PerconaDB is the database. Percona is a drop-in replacement for MySQL and the basis for MariaDB. The `my.cnf` file in this repo should be replaced with a custom `my.cnf` file whose settings have been customized to your server. A custom `my.cnf` file can be generated using [Percona's MySQL configuration wizard tool](https://tools.percona.com/wizard).
 
+The installation of the database server and client are separate from the creation of the database users and databases. The database users are highly segregated to improve security of the databases and their contents. All states related to database users and databases are in the `db` directory.
+
+It is assumed that the database will only be accessed from localhost. Change as necessary, but it is recommended that access is only allowed from the specific private ip addresses that require access to the database servers. It is also recommended that access is not allowed from public IPs. It is better to require admins to log into a specific server and access the database servers from there using private IPs.
+
+Databases and database users are specified per environment.
+
+##### DBA
+The `dba`, or database administrator has full access to all of the databases on the server. Access is only allowed from localhost. 
+
+#### Databases and DBO
+Each database has a `dbo`, or database owner. This user has full access to only the database for which it is the owner. There should be only one DBO per database. This may or may not be necessary for you. Adjust as necessary.
+
+#### Database users
+A database user has restricted access to a database: currenlty only `select`, `insert`, `update` and `delete`. This may be more permissions than you want to grant, e.g. you may wish for a user to only have `select` rights. This can be specified in the pillar.
+
+Certain applications require more grants, like Drupal. Add only the specific grants that are required by the application. It is not recommended to do a `grant all privileges` like some guides suggest. Instead the grant list should consist of: SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES.
+
 #### `webserver`
 The webserver is `nginx`, which is an event driven webserver and is better suited for modern web workloads, e.g. mobile, than the threaded Apache. Apache does have an event driven version, but, sometimes, a swiss army knife is not needed. If your needs are better suited for Apache, well, I might add support for Apache too, some day.
 
