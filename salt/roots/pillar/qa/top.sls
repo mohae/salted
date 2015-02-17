@@ -7,6 +7,7 @@
     - db.dbas
     - db.dbs
     - db.db_users
-  '*qa* and G@roles:web':
+  '*qa* and G@roles:webserver':
     - match: compound
+    - iptables
     - nginx

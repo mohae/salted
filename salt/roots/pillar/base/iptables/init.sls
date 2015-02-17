@@ -12,7 +12,8 @@
   ports:
     keyserver:
       port: 11371
-
+    something:
+      port: 1023
 
   whitelist:
     networks:

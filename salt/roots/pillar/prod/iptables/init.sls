@@ -1,5 +1,6 @@
 firewall:
-  '*web*':
-    tcp_ports:
-      - 80
-      - 443
+  env-ports:
+    http:
+      port: 80
+    https:
+      port: 443

@@ -7,3 +7,7 @@
     - db.dbas
     - db.dbs
     - db.db_users
+  '*prod* and G@rolse:webserver':
+    - match: compound
+    - iptables
+    - nginx
