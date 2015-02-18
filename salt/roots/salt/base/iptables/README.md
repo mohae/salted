@@ -1,19 +1,5 @@
 iptables-formula
 ================
-## This is a fork of https://github.com/saltstack-formulas/iptables-formula
-__Differences:__  
-* `iptables/init.sls` includes the files it uses within the `iptables` directory.
-* `iptables/ufw.sls` was added to purge `ufw` and the contents of `/etc/ufw` from Ubuntu based systems
-* `iptables/iptables.sls` was added. 
-  * The functionality that was within the original formula's `init.sls` was moved to this file
-  * The default behavior for the `FORWARD` chain is to `DROP`.
-  * A _port_ processing section was added for adding ports without sources.
-    * Allows for multiple protocols, specified as a list.
-    * Default protocol is `TCP`
-* pillar.example was updated to add an example for the new `ports` specification.
-
-### Note
-I did not include the `iptables/services.sls` stated in `init.sls` because it did not appear to be used. I'm probably wrong. Please let me know what I am missing in regards to that file
 
 This module manages your firewall using iptables with pillar configured rules. 
 Thanks to the nature of Pillars it is possible to write global and local settings (e.g. enable globally, configure locally)
@@ -46,6 +32,17 @@ firewall:
         - 10.0.2.2/32
 ```
 
+Allow the port for keyservers:
+`pillars/firewall/keyserver.sls
+```
+firewall:
+  ports:
+    keyserver:
+      port: 11371
+      proto:
+        - tcp
+```
+
 Allow an entire class such as your internal network:
 
 ```
@@ -58,10 +55,11 @@ Allow an entire class such as your internal network:
 Salt combines both and effectively enables your firewall and applies the rules.
 
 Notes:
- * Setting install to True will install `iptables` and `iptables-perrsistent` for you
+ * Setting install to True will install `iptables` and `iptables-persistent` for you
  * Strict mode means: Deny **everything** except explicitly allowed (use with care!)
  * block_nomatch: With non-strict mode adds in a "REJECT" rule below the accept rules, otherwise other traffic to that service is still allowed. Can be defined per-service or globally, defaults to False.
  * Servicenames can be either port numbers or servicenames (e.g. ssh, zabbix-agent, http) and are available for viewing/configuring in `/etc/services`
+ * Port names can either be the name of the service for the port or the port number, e.g. http, https. When using `ports` no source ip needs to be specified. This also supports 
 
 Using iptables.service
 ======================

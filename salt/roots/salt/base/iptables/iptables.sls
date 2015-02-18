@@ -20,22 +20,6 @@
       {%- endif %}
 
     {%- if strict_mode %}
-      # Set the policy to deny everything unless defined          
-      enable_input_reject_policy:
-        iptables.set_policy:
-          - table: filter
-          - chain: INPUT
-          - policy: DROP
-          - require:
-            - iptables: iptables_allow_localhost
-            - iptables: iptables_allow_established
-
-      enable_forward_reject_policy:
-        iptables.set_policy:
-          - table: filter
-          - chain: FORWARD
-          - policy: DROP
-
       # If the firewall is set to strict mode, we'll need to allow some 
       # that always need access to anything
       iptables_allow_localhost:
@@ -54,11 +38,21 @@
           - jump: ACCEPT
           - match: conntrack
           - ctstate: 'RELATED,ESTABLISHED'
-          - save: True                
+          - save: True            
+
+      # Set the policy to deny everything unless defined
+      enable_reject_policy:
+        iptables.set_policy:
+          - table: filter
+          - chain: INPUT
+          - policy: DROP
+          - require:
+            - iptables: iptables_allow_localhost
+            - iptables: iptables_allow_established
     {%- endif %}
 
   # Generate ipsets for all services that we have information about
-  {%- for service_name, service_details in firewall.get('services', {}).items() %}
+  {%- for service_name, service_details in firewall.get('services', {}).items() %}  
     {% set block_nomatch = service_details.get('block_nomatch', False) %}
 
     # Allow rules for ips/subnets
@@ -90,9 +84,9 @@
 
   {%- endfor %}
 
-  # Generate ipsets for all ports that we have information about
+    # Generate ipsets for all ports that we have information about
   {%- for port_name, port_details in firewall.get('ports', {}).items() %}  
-  
+
     # Allow rules
     {%- set port = port_details.get('port') %}
     {%- for proto in port_details.get('proto', 'tcp') %}
@@ -108,7 +102,6 @@
 
   {%- endfor %}
 
-  
   # Generate rules for NAT
   {%- for service_name, service_details in firewall.get('nat', {}).items() %}  
     {%- for ip_s, ip_d in service_details.get('rules', {}).items() %}

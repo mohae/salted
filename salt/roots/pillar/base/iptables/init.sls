@@ -14,8 +14,8 @@
       port: 11371
       proto: 
         - tcp
-    something:
-      port: 1023
+    dns:
+      port: 53
       proto:
         - tcp
         - udp
