@@ -27,7 +27,11 @@ base:
   'roles:webserver':
     - match: grain
     - nginx
-  'roles:db':
+  'roles:db-server':
+    - match: grain
+    - percona.percona-repo
+    - percona
+  'roles:db-client':
     - match: grain
     - percona.percona-repo
     - percona

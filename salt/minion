@@ -234,4 +234,5 @@ pillar_roots:
 grains:
   roles:
     - webserver
-    - db
+    - db-server
+    - db-client
