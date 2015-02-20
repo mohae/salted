@@ -48,15 +48,20 @@ The `prod` environment is for production environments.  In the public repo, this
 ### Roles
 Roles are defined by grains. Currently there are two roles supported, `db`, for database servers, and `web`, for webservers. A machine may have more than one role.
 
-#### `db`
-PerconaDB is the database. Percona is a drop-in replacement for MySQL and the basis for MariaDB. The `my.cnf` file in this repo should be replaced with a custom `my.cnf` file whose settings have been customized to your server. A custom `my.cnf` file can be generated using [Percona's MySQL configuration wizard tool](https://tools.percona.com/wizard).
+#### `db-server`
+Percona 5.6 is the database. Percona is a drop-in replacement for MySQL and the basis for MariaDB. The `my.cnf` file in this repo should be replaced with a custom `my.cnf` file whose settings have been customized to your server. A custom `my.cnf` file can be generated using [Percona's MySQL configuration wizard tool](https://tools.percona.com/wizard).
 
-The installation of the database server and client are separate from the creation of the database users and databases. The database users are highly segregated to improve security of the databases and their contents. All states related to database users and databases are in the `db` directory.
+The installation of the database server is separate from the creation of the database users and databases. The database users are highly segregated to improve security of the databases and their contents. All states related to database users and databases are in the `db` directory.
 
 It is assumed that the database will only be accessed from localhost. Change as necessary, but it is recommended that access is only allowed from the specific private ip addresses that require access to the database servers. It is also recommended that access is not allowed from public IPs. It is better to require admins to log into a specific server and access the database servers from there using private IPs.
 
 Databases and database users are specified per environment.
 
+#### `db-client`
+This grain is used for database clients. Any server with the `db-client` role will have the Percona 5.6 client installed.
+
+In this repo, the server also has the client installed.
+ 
 ##### DBA
 The `dba`, or database administrator has full access to all of the databases on the server. Access is only allowed from localhost. 
 
