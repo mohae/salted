@@ -233,6 +233,7 @@ pillar_roots:
 ###########################################
 grains:
   roles:
-    - webserver
     - db-server
     - db-client
+    - webserver
+  ssh: server

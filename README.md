@@ -22,31 +22,33 @@ Once you have added private data, like server information, usernames, passwords,
 
 Pushing such information to a public location is a serious secuirty issue. DO NOT DO IT!
 
-## Pillars, Environments, Roles, and States
-### Pillar Data
+## Pillar Data
 Some of the pillar data contained within this repository are sample data and should not be used in deployments. Any keys contained within are publicly available and insecure!
 
 Replace the keys with valid, secure keys. Once this is done, do not push the repository to any publicly available locations. Doing so will result in insecure servers and having critical information, including keys, exposed to the public.
 
-### Environments
+## Environments
 The environment is selected by matching on the minion id. If the minion's fully qualified domain name does not contain its environment as part of the name, set the minion id in the `minion` file. 
 
 Each environment may build on what was already set in the base environment, e.g. the `dev` environment will add users and groups specific to that environment while the `base` environment adds users and groups that should exist in all environments.
 
-#### `base`
+### `base`
 The `base` environment is used for software that should be on all machines and configurations that should be consistent across machines. Some of the software is installed in the base environment and updated in the other environments, e.g. `nginx` and `iptables`.
 
-#### `dev`
+### `dev`
 The 'dev' environment is for development machines.
 
-#### `qa`
+### `qa`
 The `qa` environment is for QA environments.  In the public repo, this is mostly a replication of the `dev` environment, with any dev specific stuff, like role and user, changed to qa.
 
-#### `prod`
+### `prod`
 The `prod` environment is for production environments.  In the public repo, this is mostly a replication of the `dev` environment, with any dev specific stuff, like role and user, changed to prod.
 
-### Roles
-Roles are defined by grains. Currently there are two roles supported, `db`, for database servers, and `web`, for webservers. A machine may have more than one role.
+## Custom Grains
+There are two custom grains that have been added to the minion file.
+
+### Grain: roles
+The `roles` grain is used to define the roles that the minion will have. Currently there are thre supported roles: `db-server`, for database servers; `db-client`, for database clients; and `webserver`, for webservers. A machine may have more than one role. A machine with the `db-server` role will usually have the `db-client` role too.
 
 #### `db-server`
 Percona 5.6 is the database. Percona is a drop-in replacement for MySQL and the basis for MariaDB. The `my.cnf` file in this repo should be replaced with a custom `my.cnf` file whose settings have been customized to your server. A custom `my.cnf` file can be generated using [Percona's MySQL configuration wizard tool](https://tools.percona.com/wizard).
@@ -62,6 +64,24 @@ This grain is used for database clients. Any server with the `db-client` role wi
 
 In this repo, the server also has the client installed.
  
+#### `webserver`
+The webserver is `nginx`, which is an event driven webserver and is better suited for modern web workloads, e.g. mobile, than the threaded Apache. Apache does have an event driven version, but, sometimes, a swiss army knife is not needed. If your needs are better suited for Apache, well, I might add support for Apache too, some day.
+
+The webserver role also adds `iptables` rules for allowing incoming tcp connections on port 80 and 443.
+
+### Grain: ssh
+The `ssh` grain is used to define what kind of `ssh` access is allowed for the server. There are two rulesets defined for ssh, `ssh-server` and `ssh-restricted`. If the `ssh` grain is `server`, then the `ssh-server` rules will be applied. `ssh-restricted` is the default.
+
+#### `server`
+If the `ssh` grain is set to `server` the firewall rules used for ssh will be taken from the `pillar/base/iptables/ssh-server.sls` pillar state. This state defines the port used for ssh. The resulting firewall rule for ssh allows inbound connections from anywhere. This is useful for machines which should be accessible, via ssh, from anywhere.
+
+#### `restricted`
+This is the default rule set that is used for ssh firewall rules. The firewall rules within the `pillar/base/iptables/ssh-restricted.sls` state will be applied if the ssh grain is not set to `server`. Server access via ssh is only allowed from specified networks or IPs, typically private networks. Unless `block_nomatch` is set to `False`, all other connections will be blocked.
+
+## Notes on specific states
+This section contains additional information on states for which it may be helpful.
+
+### Database
 ##### DBA
 The `dba`, or database administrator has full access to all of the databases on the server. Access is only allowed from localhost. 
 
@@ -73,13 +93,34 @@ A database user has restricted access to a database: currenlty only `select`, `i
 
 Certain applications require more grants, like Drupal. Add only the specific grants that are required by the application. It is not recommended to do a `grant all privileges` like some guides suggest. Instead the grant list should consist of: SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES.
 
-#### `webserver`
-The webserver is `nginx`, which is an event driven webserver and is better suited for modern web workloads, e.g. mobile, than the threaded Apache. Apache does have an event driven version, but, sometimes, a swiss army knife is not needed. If your needs are better suited for Apache, well, I might add support for Apache too, some day.
+### Firewall
+The firewall is iptables. The creation of firewall rules is broken up into multiple states, with each state creating a specific type or set of firewall rules. If the server's role or environment requires additional firewall rules, the can be added. The environment specific `iptables` pillar data use compound matching to accomplish this.
 
-The webserver role also adds `iptables` rules for allowing incoming tcp connections on port 80 and 443.
+#### `ufw.sls`
+If the system is running Ubuntu, `ufw` will be purged from the system including `/etc/ufw`.
 
-## Notes:
-`iptables` is used for the firewall. If you are running Ubuntu, `ufw` will be purged from the system. If the server's role or environment requires additional firewall rules, the can be added. The environment specific `iptables` pillar data use compound matching to accomplish this.
+#### `iptables.sls`
+If the firewall is enabled, this state installs the `iptables` firewall. If the system is a Debian based system, `iptables-persistent` will also be installed. It also creates the default rules including DROP INPUT, DROP FORWARD, ACCEPT OUTPUT, ACCEPT connections from localhost, and ACCEPT connections from RELATED and ESTABLISHED.
+
+#### `ssh-server.sls`
+The ssh-server state allows ssh connections from anywhere. This is useful for specifying specific machines that will accept external connections.
+
+#### `ssh-restricted.sls`
+The ssh-restricted state only allows connections from specified IPs and networks. Unless `block_nomatch` is set to `False`, everything else will be blocked. This is useful for servers on your network that will only accept connections from within your private network, or specific IPs. Ideally, these machines will not be publicly accessible.
+
+This is the default state for ssh firewall rules.
+
+#### `services.sls`
+The services state defines the rules for services, including `block_nomatch` option and specifying specific networks or IPs. This state assumes that the service will be using the `tcp` protocol.
+
+#### `ports.sls`
+The ports state defines the rules for specific ports. There is no specification of sources, connections are accepted from anywhere. The protocol can be defined: `tcp`, `udp`, or both `tcp` and `udp`. 
+
+#### `nat.sls`
+The nat state defines the rules for NAT.
+
+#### `whitelist.sls`
+The whitelist state defines the networks or IPs that will be whitelisted. Use this state sparingly. 
 
 ## Errata
 Please create an issue, or better yet, a pull request for any corrections or improvements that you make to this repo.

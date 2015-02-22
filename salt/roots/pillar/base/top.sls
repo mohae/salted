@@ -2,5 +2,4 @@
 base:
   '*':
     - iptables
-    - users.users
-    - users.groups
+    - users

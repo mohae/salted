@@ -1,4 +1,8 @@
-# Firewall management module
+# base/iptables/iptables.sls
+# Install iptables and set the defaults
+# TODO: set OUTPUT filter's default to DROP so that output rules need to be
+#   defined.
+#
 {%- if salt['pillar.get']('firewall:enabled') %}
   {% set firewall = salt['pillar.get']('firewall', {}) %}
   {% set install = firewall.get('install', False) %}
@@ -10,7 +14,7 @@
     'default': 'Debian'}) %}
 
       {%- if install %}
-      # Install required packages for firewalling      
+      # Install required packages for firewall
       iptables_packages:
         pkg.installed:
           - pkgs:
@@ -19,9 +23,7 @@
             {%- endfor %}
       {%- endif %}
 
-    {%- if strict_mode %}
-      # If the firewall is set to strict mode, we'll need to allow some 
-      # that always need access to anything
+      # Always allow localhost
       iptables_allow_localhost:
         iptables.append:
           - table: filter
@@ -41,7 +43,7 @@
           - save: True            
 
       # Set the policy to deny everything unless defined
-      enable_reject_policy:
+      enable_input_drop_policy:
         iptables.set_policy:
           - table: filter
           - chain: INPUT
@@ -49,85 +51,12 @@
           - require:
             - iptables: iptables_allow_localhost
             - iptables: iptables_allow_established
-    {%- endif %}
 
-  # Generate ipsets for all services that we have information about
-  {%- for service_name, service_details in firewall.get('services', {}).items() %}  
-    {% set block_nomatch = service_details.get('block_nomatch', False) %}
-
-    # Allow rules for ips/subnets
-    {%- for ip in service_details.get('ips_allow',{}) %}
-      iptables_{{service_name}}_allow_{{ip}}:
-        iptables.append:
+      # Set the policy to deny forwards unless defined
+      enable_forward_drop_policy:
+        iptables.set_policy:
           - table: filter
-          - chain: INPUT
-          - jump: ACCEPT
-          - source: {{ ip }}
-          - dport: {{ service_name }}
-          - proto: tcp
-          - save: True
-    {%- endfor %}
-
-
-    {%- if not strict_mode and global_block_nomatch or block_nomatch %}
-      # If strict mode is disabled we may want to block anything else
-      iptables_{{service_name}}_deny_other:
-        iptables.append:
-          - position: last
-          - table: filter
-          - chain: INPUT
-          - jump: REJECT
-          - dport: {{ service_name }}
-          - proto: tcp
-          - save: True
-    {%- endif %}    
-
-  {%- endfor %}
-
-    # Generate ipsets for all ports that we have information about
-  {%- for port_name, port_details in firewall.get('ports', {}).items() %}  
-
-    # Allow rules
-    {%- set port = port_details.get('port') %}
-    {%- for proto in port_details.get('proto', 'tcp') %}
-      iptables_{{port_name}}_allow_{{proto}}:
-        iptables.append:
-          - table: filter
-          - chain: INPUT
-          - jump: ACCEPT
-          - dport: {{ port }}
-          - proto: {{ proto }}
-          - save: True
-    {%- endfor %}
-
-  {%- endfor %}
-
-  # Generate rules for NAT
-  {%- for service_name, service_details in firewall.get('nat', {}).items() %}  
-    {%- for ip_s, ip_d in service_details.get('rules', {}).items() %}
-      iptables_{{service_name}}_allow_{{ip_s}}_{{ip_d}}:
-        iptables.append:
-          - table: nat 
-          - chain: POSTROUTING 
-          - jump: MASQUERADE
-          - o: {{ service_name }} 
-          - source: {{ ip_s }}
-          - destination: {{ip_d}}
-          - save: True
-    {%- endfor %}
-  {%- endfor %}
-
-  # Generate rules for whitelisting IP classes
-  {%- for service_name, service_details in firewall.get('whitelist', {}).items() %}
-    {%- for ip in service_details.get('ips_allow',{}) %}
-      iptables_{{service_name}}_allow_{{ip}}:
-        iptables.append:
-           - table: filter
-           - chain: INPUT
-           - jump: ACCEPT
-           - source: {{ ip }}
-           - save: True
-    {%- endfor %}
-  {%- endfor %}
+          - chain: FORWARD
+          - policy: DROP
 
 {%- endif %}

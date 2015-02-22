@@ -1,26 +1,28 @@
-﻿firewall:
-  install: True
-  enabled: True
-  strict: True
-  services:
-    ssh:
-      block_nomatch: False
-      ips_allow:
-        - 192.168.0.0/24
-        - 10.0.2.2/32
+﻿# pillar/base/iptables/init.sls
+# include the states with the firewall rules
+# firewall installs the firewall, usually iptables
+# defaults installs the default rules
+# ssh-server allows ssh connections from anywhere
+# ssh-restricted only allows ssh connections from specified sources
+# services define rules for services, these can be restricted by IP and use
+#   TCP. block_nomatch can be specified.
+# ports define rules for ports. No IP restrictions are applied and the 
+#   protcol(s) that are used can be defined.
+# nat defines the NAT rules.
+# whitelist defines whitelisted networks
+#
+{% if grains['ssh'] == 'server' %}
+  {% set ssh = 'iptables.ssh-server' %}
+{% else %}
+  {% set ssh = 'iptables.ssh-restricted' %}
+{% endif %}
 
-  ports:
-    keyserver:
-      port: 11371
-      proto: 
-        - tcp
-    dns:
-      port: 53
-      proto:
-        - tcp
-        - udp
+include:
+  - iptables.firewall
+  - iptables.ssh-server
+  - {{ ssh }}
+  - iptables.services
+  - iptables.ports
+  - iptables.nat
+  - iptables.whitelist
 
-  whitelist:
-    networks:
-      ips_allow:
-        - 10.0.0.0/8
