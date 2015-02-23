@@ -1,7 +1,7 @@
 ﻿# pillar/base/iptables/whitelist.sls
 # whitelist: rules for whitelisted networks
 #
-firewall-whitelist:
+iptables-whitelist:
   whitelist:
     networks:
       ips_allow:

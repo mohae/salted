@@ -3,18 +3,18 @@
 # TODO: set OUTPUT filter's default to DROP so that output rules need to be
 #   defined.
 #
-{%- if salt['pillar.get']('firewall:enabled') %}
-  {% set firewall = salt['pillar.get']('firewall', {}) %}
-  {% set install = firewall.get('install', False) %}
-  {% set strict_mode = firewall.get('strict', False) %}
-  {% set global_block_nomatch = firewall.get('block_nomatch', False) %}
+{%- if salt['pillar.get']('iptables:enabled') %}
+  {% set iptables = salt['pillar.get']('iptables', {}) %}
+  {% set install = iptables.get('install', False) %}
+  {% set strict_mode = iptables.get('strict', False) %}
+  {% set global_block_nomatch = iptables.get('block_nomatch', False) %}
   {% set packages = salt['grains.filter_by']({
     'Debian': ['iptables', 'iptables-persistent'],
     'RedHat': ['iptables'],
     'default': 'Debian'}) %}
 
       {%- if install %}
-      # Install required packages for firewall
+      # Install required packages for iptables
       iptables_packages:
         pkg.installed:
           - pkgs:

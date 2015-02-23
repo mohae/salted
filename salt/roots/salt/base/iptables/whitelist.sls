@@ -1,9 +1,9 @@
 ﻿# base/iptables/port.sls
 # port: define the rules for the specified ports
 #
-{% if salt['pillar.get']('firewall:enabled') %}
-  {% set firewall = salt['pillar.get']('firewall-whitelist', {}) %}
-  {% for networks, whitelist_details in firewall.get('whitelist', {}).items() %}
+{% if salt['pillar.get']('iptables:enabled') %}
+  {% set iptables = salt['pillar.get']('iptables-whitelist', {}) %}
+  {% for networks, whitelist_details in iptables.get('whitelist', {}).items() %}
     {% for ip in whitelist_details.get('ips_allow',{}) %}
       iptables_{{networks}}_allow_{{ip}}:
         iptables.append:

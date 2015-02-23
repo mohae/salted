@@ -1,6 +1,6 @@
 ﻿# pillar/base/iptables/nat.sls
 # nat: define nat rules
-firewall-nat:
+iptables-nat:
   nat:
     eth0:
       rules:

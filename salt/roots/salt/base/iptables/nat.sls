@@ -1,9 +1,9 @@
 ﻿# base/iptables/port.sls
 # port: define the rules for the specified ports
 #
-{% if salt['pillar.get']('firewall:enabled') %}
-  {% set firewall = salt['pillar.get']('firewall-nat', {}) %}
-  {% for network_interface, nat_details in firewall.get('nat', {}).items() %}  
+{% if salt['pillar.get']('iptables:enabled') %}
+  {% set iptables = salt['pillar.get']('iptables-nat', {}) %}
+  {% for network_interface, nat_details in iptables.get('nat', {}).items() %}  
     {% for ip_s, ip_d in nat_details.get('rules', {}).items() %}
       iptables_{{network_interface}}_allow_{{ip_s}}_{{ip_d}}:
         iptables.append:

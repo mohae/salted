@@ -1,7 +1,6 @@
 ﻿# pillar/base/iptables/init.sls
 # include the states with the firewall rules
-# firewall installs the firewall, usually iptables
-# defaults installs the default rules
+# base installs iptables and creates the default rules
 # ssh-server allows ssh connections from anywhere
 # ssh-restricted only allows ssh connections from specified sources
 # services define rules for services, these can be restricted by IP and use
@@ -18,7 +17,7 @@
 {% endif %}
 
 include:
-  - iptables.firewall
+  - iptables.base
   - iptables.ssh-server
   - {{ ssh }}
   - iptables.services

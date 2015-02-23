@@ -5,7 +5,7 @@
 # Note: currently the for loop on getting the protocol uses the default value,
 #   'tcp', one character at a time, so explicitly specify the proto.
 #
-firewall-ports:
+iptables-ports:
   ports:
     keyserver:
       port: 11371

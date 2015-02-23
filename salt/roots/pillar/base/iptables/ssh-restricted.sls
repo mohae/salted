@@ -1,7 +1,7 @@
 ﻿ # pillar/basea/iptables/ssh-restricted.sls
  # ssh-restricted defines sources from which ssh connections will be accepted.
  #
- firewall-ssh-restricted:
+ iptables-ssh-restricted:
     ssh:
       block_nomatch: True
       ips_allow:

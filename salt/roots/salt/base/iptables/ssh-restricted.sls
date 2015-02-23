@@ -2,9 +2,9 @@
 # ssh-internal: defines sources that from which ssh connections will be accepted.
 # If ssh-server isn't specified, only restricted connections are allowed
 #
-{% if salt['pillar.get']('firewall:enabled') %}
-  {% set firewall = salt['pillar.get']('firewall-ssh-restricted', {}) %}
-  {% set ssh_details = firewall.get('ssh') %}
+{% if salt['pillar.get']('iptables:enabled') %}
+  {% set iptables = salt['pillar.get']('iptables-ssh-restricted', {}) %}
+  {% set ssh_details = iptables.get('ssh') %}
   {% set block_nomatch = ssh_details.get('block_nomatch', False) %}
   {% set port = ssh_details.get('port', 22) %}
 

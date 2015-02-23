@@ -2,9 +2,9 @@
 # services: define the rules for the specified services.
 #
 
-{% if salt['pillar.get']('firewall:enabled') %}
-  {% set firewall = salt['pillar.get']('firewall-services', {}) %}
-  {% for service_name, service_details in firewall.get('services', {}).items() %}
+{% if salt['pillar.get']('iptables:enabled') %}
+  {% set iptables = salt['pillar.get']('iptables-services', {}) %}
+  {% for service_name, service_details in iptables.get('services', {}).items() %}
     {% set block_nomatch = service_details.get('block_nomatch', False) %}
 
     # Allow rules for ips/subnets
