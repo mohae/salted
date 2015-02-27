@@ -1,7 +1,7 @@
 qa:
   '*qa*':
     - users
-  '*qa* and G@roles:db':
+  '*qa* and G@roles:mysql-server':
     - match: compound
     - mycnf
-    - db
+    - mysqldb

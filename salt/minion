@@ -233,7 +233,7 @@ pillar_roots:
 ###########################################
 grains:
   roles:
-    - db-server
-    - db-client
+    - mysql-server
+    - mysql-client
     - webserver
   ssh: server

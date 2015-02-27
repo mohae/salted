@@ -1,8 +1,8 @@
 prod:
   '*prod*':
     - users
-  '*prod* and G@roles:db':
+  '*prod* and G@roles:mysql-server':
     - match: compound
     - mycnf
-    - db
+    - mysqldb
     

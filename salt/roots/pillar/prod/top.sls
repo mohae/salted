@@ -2,11 +2,9 @@
   '*prod*':
     - users.users
     - users.groups
-  '*prod* and G@roles:db':
+  '*prod* and G@roles:mysql-server':
     - match: compound
-    - db.dbas
-    - db.dbs
-    - db.db_users
+    - mysqldb
   '*prod* and G@rolse:webserver':
     - match: compound
     - iptables

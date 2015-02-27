@@ -2,11 +2,9 @@
   '*qa*':
     - users.users
     - users.groups
-  '*qa* and G@roles:db':
+  '*qa* and G@roles:mysql-server':
     - match: compound
-    - db.dbas
-    - db.dbs
-    - db.db_users
+    - mysqldb
   '*qa* and G@roles:webserver':
     - match: compound
     - iptables

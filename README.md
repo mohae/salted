@@ -5,7 +5,7 @@ This repository uses some formulas that requires _salt 2014.7.0_.
 This repository uses compound matching to match environments and roles. This was not supported in _salt 2014.7.0_ but is supported in _salt 2014.7.1_.
 
 ## About
-Salted is a salted deployment template that supports base, dev, qa, and production environments with web and db roles. It is designed to be a template that makes it easier to build out customized server deployments with SaltStack.
+Salted is a salted deployment template that uses both environments and roles to determine the target server's configuration. It is designed to be a template that makes it easier to build out customized server deployments with SaltStack.
 
 The salt-master and salt-minion are configured to use the same server. This is easily modified to use separate machines for the master and minion(s) by updating the `master` and `minion` files. 
 
@@ -50,19 +50,29 @@ There are two custom grains that have been added to the minion file.
 ### Grain: roles
 The `roles` grain is used to define the roles that the minion will have. Currently there are thre supported roles: `db-server`, for database servers; `db-client`, for database clients; and `webserver`, for webservers. A machine may have more than one role. A machine with the `db-server` role will usually have the `db-client` role too.
 
-#### `db-server`
-Percona 5.6 is the database. Percona is a drop-in replacement for MySQL and the basis for MariaDB. The `my.cnf` file in this repo should be replaced with a custom `my.cnf` file whose settings have been customized to your server. A custom `my.cnf` file can be generated using [Percona's MySQL configuration wizard tool](https://tools.percona.com/wizard).
+#### `mysql-server`
+The percona-server role installs the Percona 5.6 database. Percona is a drop-in replacement for MySQL and the basis for MariaDB. The `my.cnf` file in this repo should be replaced with a custom `my.cnf` file whose settings have been customized to your server. A custom `my.cnf` file can be generated using [Percona's MySQL configuration wizard tool](https://tools.percona.com/wizard).
 
-The installation of the database server is separate from the creation of the database users and databases. The database users are highly segregated to improve security of the databases and their contents. All states related to database users and databases are in the `db` directory.
+The installation of the database server is separate from the creation of the database users and databases. The database users are highly segregated to improve security of the databases and their contents. All states related to database users and databases are in the `mysqlDB` directory.
 
 It is assumed that the database will only be accessed from localhost. Change as necessary, but it is recommended that access is only allowed from the specific private ip addresses that require access to the database servers. It is also recommended that access is not allowed from public IPs. It is better to require admins to log into a specific server and access the database servers from there using private IPs.
 
 Databases and database users are specified per environment.
 
-#### `db-client`
-This grain is used for database clients. Any server with the `db-client` role will have the Percona 5.6 client installed.
+#### `mysql-client`
+Install the Percona 5.6 database client.
 
-In this repo, the server also has the client installed.
+#### `postgresql-server`
+Install the PostgreSQL database server.
+
+The installation of the database server is separate from the creation of the database users and databases. The database users are highly segregated to improve security of the databases and their contents. All states related to database users and databases are in the `postgresql-db` directory.
+
+It is assumed that the database will only be accessed from localhost. Change as necessary, but it is recommended that access is only allowed from the specific private ip addresses that require access to the database servers. It is also recommended that access is not allowed from public IPs. It is better to require admins to log into a specific server and access the database servers from there using private IPs.
+
+Databases and database users are specified per environment.
+
+#### `postgresql-client`
+Install the PostgreSQL database client.
  
 #### `webserver`
 The webserver is `nginx`, which is an event driven webserver and is better suited for modern web workloads, e.g. mobile, than the threaded Apache. Apache does have an event driven version, but, sometimes, a swiss army knife is not needed. If your needs are better suited for Apache, well, I might add support for Apache too, some day.

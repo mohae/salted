@@ -2,11 +2,9 @@
   '*dev*':
     - users.users
     - users.groups
-  '*dev* and G@roles:db':
+  '*dev* and G@roles:mysql-server':
     - match: compound
-    - db.dbas
-    - db.dbs
-    - db.db_users
+    - mysqldb
   '*dev* and G@roles:webserver':
     - match: compound
     - iptables

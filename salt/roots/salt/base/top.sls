@@ -27,11 +27,11 @@ base:
   'roles:webserver':
     - match: grain
     - nginx
-  'roles:db-server':
+  'role:mysql-server':
     - match: grain
     - percona.percona-repo
     - percona
-  'roles:db-client':
+  'roles:mysql-client':
     - match: grain
     - percona.percona-repo
     - percona
