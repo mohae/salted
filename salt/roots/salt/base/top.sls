@@ -35,3 +35,6 @@ base:
     - match: grain
     - percona.percona-repo
     - percona
+  'roles:redis':
+    - match: grain
+    - redis
