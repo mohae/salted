@@ -3,11 +3,17 @@ README
 
 ## `salted-redis`
 A salt state to install redis as a service.
+<<<<<<< HEAD
 
 By default, if the pillar is missing or hasn't been modified, Redis 2.8.19 will be downloaded, compiled, and installed as a service.
 
 ## About
 This state is designed to enable the installation of any supported Redis release from source. If a pillar is not used, Redis 2.8.19 will be installed. If a pillar is created with the information from `pillar.example`, without any changes, the current stable release for Redis will be installed.
+=======
+
+## About
+This state is designed to enable the installation of any supported Redis release from source, which defaults to the current stable release. This can be changed by specifiying another release number and its corresponding checksum in the pillar.
+>>>>>>> 2ed5803c540a84756e5c3864052e326f9596cc4e
 
 The installation will be consistent with [the redis quickstart instructions](http://redis.io/topics/quickstart), except that all Redis executables resulting from the `make` step will be copied to `/usr/local/bin`.
  
@@ -16,14 +22,21 @@ The formula currently depends on `init.d` for service management. This is not me
 Installation from distro packages is not supported and will not be supported. 
 
 ## Usage
+<<<<<<< HEAD
 Add this state to your salt repo. Optionally, create a pillar file or files for this state to customize the installation to suit your needs. This state's pillar is 
+=======
+Add this state to your salt repo and create a pillar file or files for this state to customize the installation to suit your needs. _At minimum, the checksums portion of the `pillar.example` file is required._
+>>>>>>> 2ed5803c540a84756e5c3864052e326f9596cc4e
 
 For an example, please refer to the redis states in the base pillar of my [saltbase](https://github.com/mohae/saltbase) repo.  
 
 ## Pillar
 The included `pillar.example` includes everything needed for the state to install the current Redis stable release and the checksums for all other currently supported versions. For customization of the Redis installation in your environment, only the `redis-server` portion needs to be changed. The `redis-checksum` contains all currently valid checksums.
+<<<<<<< HEAD
 
 The settings are as follows. The specified default values are the ones that the state will use when the setting is not present in a pillar. For the pillar defaults, check the `pillar.example`.
+=======
+>>>>>>> 2ed5803c540a84756e5c3864052e326f9596cc4e
 
 ### Redis Configuration Settings:
 `redis-server`: ID for server configuration settings.  
