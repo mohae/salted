@@ -1,15 +1,15 @@
-﻿# salt/dev/redis/init.sls
+﻿# redis/init.sls
 # Installs redis based on the pillar settings.
 
-{% if salt['pillar.get']('redis-server:enabled') %}
-{% set version = salt['pillar.get']('redis-server:version', 'redis-stable') %}
+{% if salt['pillar.get']('redis-server:enabled', 'enabled') %}
+{% set version = salt['pillar.get']('redis-server:version', '2.8.19') %}
 {% set checksum_info = salt['pillar.get']('redis-checksums:redis-' + version + '-checksum', {}) %}
 {% set algo = checksum_info.get('algo', 'sha1') %}
-{% set checksum = checksum_info.get('checksum', '') %}
-{% set loglevel = salt['pillar.get']('redis-server:loglevel', "notice") %}
+{% set checksum = checksum_info.get('checksum', '3e362f4770ac2fdbdce58a5aa951c1967e0facc8') %}
+{% set loglevel = salt['pillar.get']('redis-server:loglevel', 'notice') %}
 {% set port = salt['pillar.get']('redis-server:port', 6379) %}
 {% set root = salt['pillar.get']('redis-server:root', '/etc/redis') %}
-{% set var = salt['pillar.get']('redis-server:var', '/etc/var') %}
+{% set var = salt['pillar.get']('redis-server:var', '/var/redis') %}
 {% set work = salt['pillar.get']('redis-server:work', '/tmp/redis') %}
 
 redis-{{ version }}-dependencies:
@@ -27,11 +27,14 @@ redis-{{ version }}-dependencies:
 
 download-redis-{{ version }}:
   archive.extracted:
-    - name: {{ work }}/
+    - name: {{ work }}
+    {% if version == 'stable' %}
+    - source: http://download.redis.io/redis-stable.tar.gz
+    {% else %}
     - source: http://download.redis.io/releases/redis-{{ version }}.tar.gz
+    {% endif %}
     - source_hash: {{ algo }}={{ checksum }}
     - archive_format: tar
-#    - tar_options: zv
     - if_missing: {{ work }}/redis-{{ version }}
     - require:
       - pkg: redis-{{ version }}-dependencies
@@ -57,27 +60,33 @@ redis-{{ version }}-executables:
       - cp redis-benchmark /usr/local/bin/
       - cp redis-check-aof /usr/local/bin/
       - cp redis-check-dump /usr/local/bin/
+      
 
-config-redis-{{ version }}-executables:
+redis-{{ version }}-copy-init:
   cmd.wait:
     - cwd: {{ work }}/redis-{{ version }}
     - names:
+      - cp utils/redis_init_script /etc/init.d/redis_{{ port }}
+    - watch:
+      - cmd: make-redis-{{ version }}
+
+config-redis-{{ version }}-dirs:
+  cmd.wait:
+    - names:
       - mkdir {{ root }}
-    {% if root != var %}
       - mkdir {{ var }}
-    {% endif %}
-      - cp  utils/redis_init_script /etc/init.d/redis_{{ port }}
-      - cp redis.conf {{ root }}/{{ port }}.conf
-      - update-rc.d redis_{{ port }} defaults
     - watch:
       - cmd: redis-{{ version }}-executables
 
-create-redis-{{ version }}-wd:
+setup-redis-{{ version }}:
   cmd.wait:
+    - cwd: {{ work }}/redis-{{ version }}
     - names:
       - mkdir {{ var }}/{{ port }}
+      - cp redis.conf {{ root }}/{{ port }}.conf
+      - update-rc.d redis_{{ port }} defaults
     - watch:
-      - cmd: config-redis-{{ version }}-executables
+      - cmd: config-redis-{{ version }}-dirs
 
 redis-{{ version }}-config-daemonize:
   file.replace:
@@ -85,7 +94,7 @@ redis-{{ version }}-config-daemonize:
     - pattern: "daemonize no"
     - repl: "daemonize yes"
     - require:
-      - cmd: config-redis-{{ version }}-executables
+      - cmd: redis-{{ version }}-executables
 
 redis-{{ version }}-config-pidfile:
   file.replace:
@@ -93,7 +102,7 @@ redis-{{ version }}-config-pidfile:
     - pattern: "pidfile /var/run/redis.pid"
     - repl: "pidfile /var/run/redis_{{ port }}.pid"
     - require:
-      - cmd: config-redis-{{ version }}-executables
+      - cmd: redis-{{ version }}-executables
 
 redis-{{ version }}-config-port:
   file.replace:
@@ -101,7 +110,7 @@ redis-{{ version }}-config-port:
     - pattern: "port 6379"
     - repl: "port {{ port }}"
     - require:
-      - cmd: config-redis-{{ version }}-executables
+      - cmd: redis-{{ version }}-executables
 
 redis-{{ version }}-config-loglevel:
   file.replace:
@@ -109,7 +118,7 @@ redis-{{ version }}-config-loglevel:
     - pattern: "loglevel notice"
     - repl: "loglevel {{ loglevel }}"
     - require:
-      - cmd: config-redis-{{ version }}-executables
+      - cmd: redis-{{ version }}-executables
 
 redis-{{ version }}-config-logfile:
   file.replace:
@@ -117,7 +126,7 @@ redis-{{ version }}-config-logfile:
     - pattern: "logfile \"\""
     - repl: "logfile \"/var/log/redis_{{ port }}.log\""
     - require:
-      - cmd: config-redis-{{ version }}-executables
+      - cmd: redis-{{ version }}-executables
 
 redis-{{ version }}-config-dir:
   file.replace:
@@ -125,7 +134,7 @@ redis-{{ version }}-config-dir:
     - pattern: "dir ./"
     - repl: "dir {{ var }}/{{ port }}"
     - require:
-      - cmd: config-redis-{{ version }}-executables
+      - cmd: redis-{{ version }}-executables
 
 redis_{{ port }}:
   service.running:
