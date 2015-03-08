@@ -2,7 +2,7 @@ Salted
 =======
 __Requires Salt version 2014.7.1 (Helium) or Greater__  
 This repository uses some formulas that requires _salt 2014.7.0_.
-This repository uses compound matching to match environments and roles. This was not supported in _salt 2014.7.0_ but is supported in _salt 2014.7.1_.
+This repository uses compound matching to match environments and roles. Compund matching was not supported in _salt 2014.7.0_ but is supported in _salt 2014.7.1_.
 
 ## About
 Salted is a salted deployment template that uses both environments and roles to determine the target server's configuration. It is designed to be a template that makes it easier to build out customized server deployments with SaltStack.
@@ -18,14 +18,14 @@ For the most part, all you will need to do is modify the pillar data to meet you
 
 Any roles that the minion will have will also need to be added to the `minion` file as grains. Grains are specified at the end of the `minion` files in this repo.
 
-Once you have added private data, like server information, usernames, passwords, and keys, do not push changes to this repo to a public location, e.g. a public GitHub repo. Make sure you use a private location like GitHub's private repos or BitBucket. 
+__Once you have added private data, like server information, usernames, passwords, and keys, do not push changes to this repo to a public location, e.g. a public GitHub repo. Make sure you use a private location like GitHub's private repos or BitBucket.__ 
 
-Pushing such information to a public location is a serious secuirty issue. DO NOT DO IT!
+__Pushing such information to a public location is a serious secuirty issue. DO NOT DO IT!__
 
 ## Pillar Data
-Some of the pillar data contained within this repository are sample data and should not be used in deployments. Any keys contained within are publicly available and insecure!
+Some of the pillar data contained within this repository are sample data and should not be used in deployments. _Any keys contained within are publicly available and insecure!_
 
-Replace the keys with valid, secure keys. Once this is done, do not push the repository to any publicly available locations. Doing so will result in insecure servers and having critical information, including keys, exposed to the public.
+__Replace the keys with valid, secure keys. Once this is done, do not push the repository to any publicly available locations. Doing so will result in insecure servers and having critical information, including keys, exposed to the public.__
 
 ## Environments
 The environment is selected by matching on the minion id. If the minion's fully qualified domain name does not contain its environment as part of the name, set the minion id in the `minion` file. 
@@ -45,7 +45,7 @@ The `qa` environment is for QA environments.  In the public repo, this is mostly
 The `prod` environment is for production environments.  In the public repo, this is mostly a replication of the `dev` environment, with any dev specific stuff, like role and user, changed to prod.
 
 ## Custom Grains
-There are two custom grains that have been added to the minion file.
+Custom grains are used two help specify what should be installed where and what configuration they should use.
 
 ### Grain: roles
 The `roles` grain is used to define the roles that the minion will have. Currently there are thre supported roles: `db-server`, for database servers; `db-client`, for database clients; and `webserver`, for webservers. A machine may have more than one role. A machine with the `db-server` role will usually have the `db-client` role too.
@@ -62,22 +62,8 @@ Databases and database users are specified per environment.
 #### `mysql-client`
 Install the Percona 5.6 database client.
 
-#### `postgresql-server`
-Install the PostgreSQL database server.
-
-The installation of the database server is separate from the creation of the database users and databases. The database users are highly segregated to improve security of the databases and their contents. All states related to database users and databases are in the `postgresql-db` directory.
-
-It is assumed that the database will only be accessed from localhost. Change as necessary, but it is recommended that access is only allowed from the specific private ip addresses that require access to the database servers. It is also recommended that access is not allowed from public IPs. It is better to require admins to log into a specific server and access the database servers from there using private IPs.
-
-Databases and database users are specified per environment.
-
-#### `postgresql-client`
-Install the PostgreSQL database client.
- 
-#### `webserver`
-The webserver is `nginx`, which is an event driven webserver and is better suited for modern web workloads, e.g. mobile, than the threaded Apache. Apache does have an event driven version, but, sometimes, a swiss army knife is not needed. If your needs are better suited for Apache, well, I might add support for Apache too, some day.
-
-The webserver role also adds `iptables` rules for allowing incoming tcp connections on port 80 and 443.
+#### `redis`
+Installs Redis from source and configures it to be consistent with http://redis.io/topics/quickstart. Without a pillar, it defaults to Redis 2.8.19. With the pillar and with no modifications to it, it defaults to Redis stable.
 
 ### Grain: ssh
 The `ssh` grain is used to define what kind of `ssh` access is allowed for the server. There are two rulesets defined for ssh, `ssh-server` and `ssh-restricted`. If the `ssh` grain is `server`, then the `ssh-server` rules will be applied. `ssh-restricted` is the default.
@@ -131,6 +117,30 @@ The nat state defines the rules for NAT.
 
 #### `whitelist.sls`
 The whitelist state defines the networks or IPs that will be whitelisted. Use this state sparingly. 
+
+## Included states:
+
+* curl
+* psmisc
+* tree
+* date
+* git
+* iptables
+* local
+* logrotate
+* nginx
+* ntp
+* openssh
+* percona
+* redis
+* sudo
+* timezone
+* users
+* vim
+* wireshark
+
+## Pillar info:
+In progress
 
 ## Errata
 Please create an issue, or better yet, a pull request for any corrections or improvements that you make to this repo.
